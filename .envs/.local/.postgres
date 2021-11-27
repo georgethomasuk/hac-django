@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=hac_shop
+POSTGRES_USER=jjaEXdlSFkDAqEpbYaAuqSASkbkJdkOr
+POSTGRES_PASSWORD=re4QDszLtfxZgVgPdqC5cL0GwOruOHD7SrcZerZ3letB4l3gdHq2jAkUAZvYn2cE
