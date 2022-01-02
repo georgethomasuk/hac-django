@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load tz %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+  Cancel your drill supper
+{% endblock %}
+
+{% block content %}
+  {% timezone "Europe/London" %}
+  <div class="container-fluid" style="max-width: 500px;">
+    <div class="row mt-5">
+      <div class="col">
+        <div class="card">
+          <div class="card-header text-muted text-center">
+            {{object.pk}}
+          </div>
+          <div class="card-body text-center">
+            <h1>Cancel your booking</h1>
+            <hr />
+            <p>
+              <span class="fw-bold">{{object.quantity}}x</span> Drill Suppers at the HAC<br />
+              from {{object.drill_night.date_time|time:"H:i"}} on {{object.drill_night.date_time|date:"l j F"}}<br />
+              for <span class="fw-bold">{{object.name}}</span>
+            </p>
+            {% if object.status == "paid" %}
+              <hr />
+              <h2 class="fs-5">Confirm your email to refund</h3>
+              {% crispy form %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endtimezone %}
+{% endblock content %}

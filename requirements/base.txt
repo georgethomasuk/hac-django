@@ -6,6 +6,10 @@ whitenoise==5.3.0  # https://github.com/evansd/whitenoise
 redis==4.0.2  # https://github.com/andymccurdy/redis-py
 hiredis==2.0.0  # https://github.com/redis/hiredis-py
 
+
+dj-stripe==2.5.1  # https://github.com/dj-stripe/dj-stripe
+stripe==2.64.0 # https://github.com/stripe/stripe-python
+
 # Django
 # ------------------------------------------------------------------------------
 django==3.2.9  # pyup: < 4.0  # https://www.djangoproject.com/

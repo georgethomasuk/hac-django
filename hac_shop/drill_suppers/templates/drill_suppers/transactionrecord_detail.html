@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load tz %}
+
+
+{% block title %}
+  Drill Supper Booking Confirmation
+{% endblock %}
+
+{% block content %}
+  {% timezone "Europe/London" %}
+  <div class="container-fluid" style="max-width: 500px;">
+    <div class="row mt-5">
+      <div class="col">
+        <div class="card">
+          <div class="card-header text-muted text-center">
+            {{object.pk}}
+          </div>
+          <div class="card-body text-center">
+
+            {% if object.status == 'awaiting_checkout' %}
+              <div class="alert alert-danger" role="alert">
+                <h1>Payment not complete</h1>
+                <a href="{{object.stripecheckoutsession.url}}">
+                  <button class="btn btn-primary">
+                    Complete your purchase
+                  </button>
+                </a>
+              </div>
+            {% elif object.status == "refunded" %}
+              <div class="alert alert-warning" role="alert">
+                <h1>Cancelled and Refunded</h1>
+                <p>
+                  Your purchase has been refunded, the money will be returned to your account within 5-10 days.
+                </p>
+              </div>
+            {% elif object.status == "cancelled" %}
+              <div class="alert alert-warning" role="alert">
+                <h1>Cancelled</h1>
+                <p>
+                  Your purchase was cancelled before any money was taken.
+                </p>
+              </div>
+            {% elif object.status == "paid" %}
+              <div class="alert alert-success" role="alert">
+                <h1>Purchase Complete</h1>
+              </div>
+            {% endif %}
+            <p></p>
+            <hr />
+            <p>
+              <span class="fw-bold">{{object.quantity}}x</span> Drill Suppers at the HAC<br />
+              from {{object.drill_night.date_time|time:"H:i"}} on {{object.drill_night.date_time|date:"l j F"}}<br />
+              for <span class="fw-bold">{{object.name}}</span>
+            </p>
+            {% if object.dietary_notes %}
+              <h3 class="fs-6 fw-bold">Dietary Notes</h3>
+              <p>{{object.dietary_notes}}
+            {% endif %}
+            {% if object.status == "paid" %}
+              <hr />
+              <h2 class="fs-5">Instructions</h3>
+              <p>
+                Your name and email will be on a list held by the staff on the night.
+                There is no need to bring any proof of your booking. Meals will be
+                available from the Sutling Room.
+              </p>
+              <p>
+                If you change your mind, you can cancel this booking until {{object.drill_night.cut_off_time|time:"H:i"}} on {{object.drill_night.cut_off_time|date:"l j F"}}.
+              </p>
+            {% endif %}
+          </div>
+          <div class="card-footer text-muted text-center">
+            {% if object.drill_night.is_before_cut_off_time and object.status == 'paid' %}
+              <a href="{% url 'drill_suppers:refund' object.pk %}">
+                <button class="btn btn-danger">Cancel Booking</button>
+              </a>
+            {% endif %}
+            <a href="{% url 'drill_suppers:index' %}">
+              <button class="btn btn-primary">Book another</button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endtimezone %}
+{% endblock content %}

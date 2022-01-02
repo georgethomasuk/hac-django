@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+  Purchase a Drill Supper
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid" style="max-width: 500px;">
+    <div class="row mt-4">
+      <div class="col">
+        <h1>Purchase Drill Suppers</h1>
+        <p>Book a drill supper at the HAC, which includes a main meal and a dessert.</p>
+
+        <p>Bookings can be made up until 6pm on the day.</p>
+      </div>
+    </div>
+    {% crispy form %}
+  </div>
+{% endblock content %}
