@@ -3,9 +3,11 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 
 from .forms import PurchaseForm, RefundForm
-from .models import StripeCheckoutSession, TransactionRecord
+from .models import DrillNight, StripeCheckoutSession, TransactionRecord
 
 
 class TransactionRecordCreate(CreateView):
@@ -76,3 +78,8 @@ class TransactionRecordRefund(UpdateView):
     def form_valid(self, form):
         self.object.refund()
         return redirect(self.object)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class DrillNightReport(DetailView):
+    model = DrillNight

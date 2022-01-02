@@ -5,6 +5,7 @@ from pathlib import Path
 
 import environ
 import stripe
+import pytz
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # hac_shop/
@@ -24,7 +25,7 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/London"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
@@ -37,6 +38,8 @@ USE_L10N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
+
+HAC_TIMEZONE = pytz.timezone('Europe/London')
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -72,7 +75,6 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "djstripe",
 ]
 
 LOCAL_APPS = [
@@ -274,13 +276,5 @@ SOCIALACCOUNT_ADAPTER = "hac_shop.users.adapters.SocialAccountAdapter"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
-STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
-STRIPE_LIVE_MODE = False  # Change to True in production
-DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"  # Get it from the section in the Stripe dashboard where you added the webhook endpoint
-DJSTRIPE_USE_NATIVE_JSONFIELD = (
-    True  # We recommend setting to True for new installations
-)
-DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
 
 stripe.api_key = env("STRIPE_TEST_SECRET_KEY")

@@ -12,4 +12,5 @@ urlpatterns = [
     ),
     path("<pk>/cancel", views.TransactionRecordCancelled.as_view(), name="cancel"),
     path("<pk>/refund", views.TransactionRecordRefund.as_view(), name="refund"),
+    path("report/<pk>", views.DrillNightReport.as_view(), name="drill_night_report"),
 ]

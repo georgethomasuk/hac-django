@@ -1,4 +1,5 @@
 import uuid
+import pytz
 from datetime import datetime, timedelta, timezone
 
 import stripe
@@ -7,13 +8,25 @@ from django.db import models
 from django.db.models import fields
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 SERVER_URL = "http://localhost:8000"
 
+HAC_TIMEZONE = settings.HAC_TIMEZONE
 
 class AfterDrillNightCutOffError(Exception):
     pass
 
+
+class DrillNightManager(models.Manager):
+    def get_queryset(self):
+        # Only allow dill nights that are on sale, the cut_off time is in the future
+        # and the drill night is within the next 4 weeks
+        return (
+            super()
+            .get_queryset()
+            .annotate(meals_sold=models.Sum('transactionrecord__quantity', filter=models.Q(transactionrecord__status='paid')))
+        )
 
 class OnSaleManager(models.Manager):
     def get_queryset(self):
@@ -32,7 +45,7 @@ class OnSaleManager(models.Manager):
 
 class DrillNight(models.Model):
 
-    objects = models.Manager()
+    objects = DrillNightManager()
     sellable = OnSaleManager()
 
     date_time = models.DateTimeField()
@@ -40,11 +53,30 @@ class DrillNight(models.Model):
 
     on_sale = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['date_time']
+
     def __str__(self) -> str:
-        return self.date_time.strftime("%a %d %b (%H:%M)")
+        return self.date_time.strftime("%a %d %b %Y (%H:%M)")
 
     def is_before_cut_off_time(self) -> bool:
-        return datetime.now(timezone.utc) < self.cut_off_time
+        return datetime.now(HAC_TIMEZONE) < self.cut_off_time
+
+    @property
+    def date(self):
+        return self.date_time.strftime("%d %b %Y")
+
+    @property
+    def day_of_week(self):
+        return self.date_time.strftime("%a")
+
+    @property
+    def time(self):
+        return self.date_time.strftime("%H:%M")
+
+    @property
+    def cut_off_delta(self):
+        return f"{str(self.date_time - self.cut_off_time)} before"
 
 
 class TransactionRecord(models.Model):
@@ -87,9 +119,9 @@ class TransactionRecord(models.Model):
     def get_absolute_url(self):
         return reverse("drill_suppers:detail", args=[self.id])
 
-    def refund(self):
+    def refund(self, ignore_checks=False):
 
-        if not self.drill_night.is_before_cut_off_time():
+        if not self.drill_night.is_before_cut_off_time() and not ignore_checks:
             raise AfterDrillNightCutOffError
 
         session = self.stripecheckoutsession.get_session()

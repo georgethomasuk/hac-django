@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load tz %}
+
+
+{% block title %}
+  Drill Supper Booking Report
+{% endblock %}
+
+{% block content %}
+  {% timezone "Europe/London" %}
+  <div class="container-fluid">
+    <div class="row mt-5 mb-3">
+      <div class="col col-md-6">
+        <h1>Drill Supper Booking Report</h1>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Drill Supper:</th>
+              <td>{{object}}</td>
+            </tr>
+            <tr>
+              <th>Report Generated at:</th>
+              <td>{% now "jS F Y H:i" %}</td>
+            </tr>
+            <tr>
+              <th>Meals Sold:</th>
+              <td>{{object.meals_sold}}</td>
+            </tr>
+          <tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <table class="table table-striped">
+          <thead>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Status</th>
+            <th scope="col">Dietary Notes</th>
+          </thead>
+          <tbody>
+            {% for transaction in object.transactionrecord_set.all|dictsort:"name" %}
+              <tr>
+                <th scope="row">
+                  {% if transaction.status != "paid" %}<del>{% endif %}
+                    {{transaction.name}}</th>
+                  {% if transaction.status != "paid" %}</del>{% endif %}
+                </th>
+
+                <td>
+                  {% if transaction.status != "paid" %}<del>{% endif %}
+                    {{transaction.email}}</th>
+                  {% if transaction.status != "paid" %}</del>{% endif %}
+                </td>
+
+                <td>
+                  {% if transaction.status != "paid" %}<del>{% endif %}
+                    {{transaction.quantity}}</th>
+                  {% if transaction.status != "paid" %}</del>{% endif %}
+                </td>
+
+                <td>
+                  {% if transaction.status != "paid" %}<del>{% endif %}
+                    {{transaction.status}}</th>
+                  {% if transaction.status != "paid" %}</del>{% endif %}
+                </td>
+
+                <td>
+                  {% if transaction.status != "paid" %}<del>{% endif %}
+                    {{transaction.dietary_notes}}</th>
+                  {% if transaction.status != "paid" %}</del>{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endtimezone %}
+{% endblock content %}

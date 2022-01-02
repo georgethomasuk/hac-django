@@ -16,7 +16,6 @@ urlpatterns = [
     path("users/", include("hac_shop.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path("stripe/", include("djstripe.urls", namespace="djstripe")),
     path("supper/", include("hac_shop.drill_suppers.urls", namespace="drill_suppers")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
