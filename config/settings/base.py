@@ -277,4 +277,4 @@ SOCIALACCOUNT_ADAPTER = "hac_shop.users.adapters.SocialAccountAdapter"
 # Your stuff...
 # ------------------------------------------------------------------------------
 
-stripe.api_key = env("STRIPE_TEST_SECRET_KEY")
+stripe.api_key = env("STRIPE_SECRET_KEY")

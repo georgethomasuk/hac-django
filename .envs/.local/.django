@@ -2,5 +2,4 @@
 # ------------------------------------------------------------------------------
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
-STRIPE_LIVE_SECRET_KEY = 123
-STRIPE_TEST_SECRET_KEY = sk_test_51J1TyKLqUjiXusfCjAaSX7pAc37us8BatbmfbnGeeF7M7aCjETYAJz6YYY5b9Syv3faZqlbNjI7435C28O7YuwPO00zmUOqDUM
+STRIPE_SECRET_KEY = sk_test_51J1TyKLqUjiXusfCjAaSX7pAc37us8BatbmfbnGeeF7M7aCjETYAJz6YYY5b9Syv3faZqlbNjI7435C28O7YuwPO00zmUOqDUM
