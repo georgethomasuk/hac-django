@@ -276,5 +276,5 @@ SOCIALACCOUNT_ADAPTER = "hac_shop.users.adapters.SocialAccountAdapter"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-STRIPE_CALLACK_URL=env("STRIPE_CALLACK_URL", default="http://localhost:8000")
+STRIPE_CALLBACK_URL=env("STRIPE_CALLACK_URL", default="http://localhost:8000")
 stripe.api_key = env("STRIPE_SECRET_KEY")
