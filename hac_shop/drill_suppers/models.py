@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
-SERVER_URL = "http://localhost:8000"
+SERVER_URL = settings.STRIPE_CALLBACK_URL
 
 HAC_TIMEZONE = settings.HAC_TIMEZONE
 
@@ -77,6 +77,9 @@ class DrillNight(models.Model):
     @property
     def cut_off_delta(self):
         return f"{str(self.date_time - self.cut_off_time)} before"
+
+    def get_absolute_url(self):
+        return reverse("drill_suppers:drill_night_report", args=[self.id])
 
 
 class TransactionRecord(models.Model):
