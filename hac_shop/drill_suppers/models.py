@@ -67,7 +67,7 @@ class DrillNight(models.Model):
             return self.datetime_string
 
     def is_before_cut_off_time(self) -> bool:
-        return datetime.now(HAC_TIMEZONE) < self.cut_off_time
+        return datetime.now(HAC_TIMEZONE) < self.cut_off_time.replace(tzinfo=HAC_TIMEZONE)
 
     @property
     def date(self):
