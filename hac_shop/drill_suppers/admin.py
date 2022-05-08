@@ -5,7 +5,7 @@ from .models import DrillNight, TransactionRecord
 @admin.register(DrillNight)
 class DrillNightAdmin(admin.ModelAdmin):
 
-    list_display = ["date", "day_of_week", "time", "cut_off_delta", "meals_sold"]
+    list_display = ["date", "annotation", "day_of_week", "time", "cut_off_delta", "meals_sold"]
     date_hierarchy = "date_time"
 
     def meals_sold(self, obj):

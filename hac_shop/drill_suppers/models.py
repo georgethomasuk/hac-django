@@ -1,6 +1,6 @@
 import uuid
 import pytz
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 
 import stripe
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -51,13 +51,20 @@ class DrillNight(models.Model):
     date_time = models.DateTimeField()
     cut_off_time = models.DateTimeField()
 
+    price = models.DecimalField(max_digits=5, decimal_places=2, default=5)
+    annotation = models.CharField(null=True, blank=True, max_length=50, help_text="To describe special events like Gun Salutes")
+
     on_sale = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['date_time']
 
     def __str__(self) -> str:
-        return self.date_time.strftime("%a %d %b %Y (%H:%M)")
+
+        if self.annotation:
+            return f"{self.datetime_string} - {self.annotation}"
+        else:
+            return self.datetime_string
 
     def is_before_cut_off_time(self) -> bool:
         return datetime.now(HAC_TIMEZONE) < self.cut_off_time
@@ -73,6 +80,10 @@ class DrillNight(models.Model):
     @property
     def time(self):
         return self.date_time.strftime("%H:%M")
+
+    @property
+    def datetime_string(self):
+        return self.date_time.strftime("%a %d %b %Y (%H:%M)")
 
     @property
     def cut_off_delta(self):
@@ -152,6 +163,8 @@ class StripeCheckoutSession(models.Model):
         if self.session_id and self.checkout_url:
             return
 
+        title = self.transaction_record.drill_night.annotation if self.transaction_record.drill_night.annotation else "Drill Night"
+
         checkout_session = stripe.checkout.Session.create(
             success_url=f"{SERVER_URL}/supper/{self.transaction_record.id}/purchased?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{SERVER_URL}/supper/{self.transaction_record.id}/cancel?session_id={{CHECKOUT_SESSION_ID}}",
@@ -163,18 +176,15 @@ class StripeCheckoutSession(models.Model):
                     "price_data": {
                         "currency": "GBP",
                         "product_data": {
-                            "name": f"Drill Supper on {self.transaction_record.drill_night}",
+                            "name": f"{title} on {self.transaction_record.drill_night.datetime_string}",
                         },
                         "tax_behavior": "inclusive",
-                        "unit_amount": 500,
+                        "unit_amount": int(self.transaction_record.drill_night.price * 100),
                     },
                     "quantity": self.transaction_record.quantity,
                 },
             ],
         )
-
-        print(checkout_session.id)
-        print(checkout_session.url)
 
         self.session_id = checkout_session.id
         self.checkout_url = checkout_session.url
